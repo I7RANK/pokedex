@@ -6,7 +6,7 @@ import BaseButton from "@/components/BaseButton.vue";
   <div class="max-w-layout relative mt-[35px] flex flex-col items-center">
     <img
       class="z-10 h-[288px] w-[325px]"
-      src="https://res.cloudinary.com/dnmjkesyn/image/upload/v1749764680/9114966f-19d1-4062-9c7a-f774007b2594.png"
+      src="https://res.cloudinary.com/dnmjkesyn/image/upload/q_auto:best/v1749764680/9114966f-19d1-4062-9c7a-f774007b2594.png"
       alt="Pikachu waving"
     />
     <div class="mt-15 flex flex-col items-center">
@@ -18,7 +18,9 @@ import BaseButton from "@/components/BaseButton.vue";
         to Trainers in the Pokémon world.
       </p>
 
-      <BaseButton class="mt-12.5" variant="primary">Get started</BaseButton>
+      <NuxtLink to="/pokemon">
+        <BaseButton class="mt-12.5" variant="primary">Get started</BaseButton>
+      </NuxtLink>
     </div>
   </div>
 </template>
