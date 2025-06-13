@@ -6,7 +6,7 @@ const props = defineProps<{
 const variantClasses = computed(() => {
   return props.variant === "primary"
     ? "bg-primary active:bg-primary-pressed hover:opacity-90"
-    : "bg-secondary";
+    : "bg-secondary active:bg-secondary-pressed hover:opacity-90";
 });
 </script>
 
