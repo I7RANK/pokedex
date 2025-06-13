@@ -1,9 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-500: #f22539;
+  --color-primary: #f22539;
+  --color-primary-pressed: #c00e20;
+  --color-secondary: #bfbfbf;
+  --color-dark: #353535;
+  --color-neutral: #5e5e5e;
 
   --spacing-15: 3.75rem;
   --spacing-7.5: 1.875rem;
   --spacing-12.5: 3.125rem;
+  --spacing-layout: 35.625rem;
+
+  --text-h1: 1.625rem;
 }

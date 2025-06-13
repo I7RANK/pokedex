@@ -1,0 +1,20 @@
+<script setup lang="ts">
+const props = defineProps<{
+  variant: "primary" | "secondary";
+}>();
+
+const variantClasses = computed(() => {
+  return props.variant === "primary"
+    ? "bg-primary active:bg-primary-pressed hover:opacity-90"
+    : "bg-secondary";
+});
+</script>
+
+<template>
+  <button
+    class="cursor-pointer rounded-full px-5 py-[11px] text-white transition-all"
+    :class="variantClasses"
+  >
+    <slot />
+  </button>
+</template>
