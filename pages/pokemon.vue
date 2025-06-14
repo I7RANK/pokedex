@@ -3,19 +3,15 @@ import type { PokemonResponse, Pokemon } from "@/types/pokemon.type";
 import type { FooterFilterOptions } from "@/types/filters.type";
 import PokemonCard from "~/components/PokemonCard.vue";
 import FooterFilters from "~/components/FooterFilters.vue";
+import NotFoundMessage from "~/components/NotFoundMessage.vue";
+import SearchInput from "~/components/SearchInput.vue";
+import { filterPokemonByName } from "~/utils/filterPokemonByName";
 
+const searchQuery = ref("");
 const allPokemons = ref<Pokemon[]>([]);
 const maxIndex = ref(0);
 const loading = ref(true);
 const activeFilter = ref<FooterFilterOptions>("all");
-const visiblePokemons = computed(() => {
-  if (activeFilter.value === "all") return loadedPokemons.value;
-  else {
-    return Object.values(favorites.value)
-      .filter((favorite) => favorite.isFavorite)
-      .map((favorite) => favorite.pokemon);
-  }
-});
 const favorites = ref<
   Record<string, { pokemon: Pokemon; isFavorite: boolean }>
 >({});
@@ -23,6 +19,22 @@ const loadedPokemons = ref<Pokemon[]>([]);
 const batchSize = 24;
 const currentIndex = ref(0);
 const sentinel = ref(null);
+
+const visiblePokemons = computed(() => {
+  let baseList: Pokemon[] = [];
+  if (activeFilter.value === "all") {
+    // is searchQuery has value will filter from all pokemons
+    // instead of only loaded pokemons
+    if (searchQuery.value.trim() !== "") baseList = allPokemons.value;
+    else baseList = loadedPokemons.value;
+  } else {
+    baseList = Object.values(favorites.value)
+      .filter((favorite) => favorite.isFavorite)
+      .map((favorite) => favorite.pokemon);
+  }
+
+  return filterPokemonByName(searchQuery.value, baseList);
+});
 
 const getAllPokemons = async () => {
   try {
@@ -52,6 +64,7 @@ const createObserver = () => {
   const observer = new IntersectionObserver(
     (entries) => {
       if (activeFilter.value === "favorites") return;
+      if (searchQuery.value.trim() !== "") return;
       if (entries[0].isIntersecting) loadMore();
     },
     { threshold: 1 },
@@ -61,7 +74,6 @@ const createObserver = () => {
 
 onMounted(async () => {
   await getAllPokemons();
-  console.log(allPokemons.value);
   loadMore();
   createObserver();
 });
@@ -76,14 +88,22 @@ const handleOnClickFavorites = (pokemon: Pokemon) => {
 const handleFilterChange = (selectedFilter: FooterFilterOptions) => {
   activeFilter.value = selectedFilter;
 };
+
+watch(searchQuery, (value) => {
+  if (value.trim() === "") return;
+});
 </script>
 
 <template>
   <div class="mb-20">
-    {{ loading }}
+    {{ loading }} - {{ searchQuery }}
     <div v-if="loading"></div>
-    <div v-else>
-      <div class="max-w-layout mx-auto flex flex-col items-center gap-y-2.5">
+    <div v-else class="max-w-layout mx-auto">
+      <SearchInput v-model="searchQuery" />
+      <NotFoundMessage
+        v-if="searchQuery.trim() !== '' && !visiblePokemons.length"
+      />
+      <div class="mt-10 flex flex-col items-center gap-y-2.5">
         <PokemonCard
           v-for="pokemon in visiblePokemons"
           :key="pokemon.name"

@@ -12,7 +12,7 @@ const variantClasses = computed(() => {
 
 <template>
   <button
-    class="cursor-pointer rounded-full px-5 py-[11px] text-white transition-all"
+    class="text-h2 cursor-pointer rounded-full px-5 py-[11px] text-white transition-all"
     :class="variantClasses"
   >
     <slot />
