@@ -6,6 +6,8 @@ defineProps<{
   name: string;
   isFavorite: boolean;
 }>();
+
+const emit = defineEmits(["onClickFavorites"]);
 </script>
 
 <template>
@@ -13,15 +15,18 @@ defineProps<{
     class="flex w-full items-center justify-between rounded-[5px] bg-white py-2 pr-2.5 pl-5"
   >
     <p class="text-[22px] capitalize">{{ name }}</p>
-    <div class="relative h-11 w-11">
+    <button
+      class="relative h-11 w-11 cursor-pointer"
+      @click="emit('onClickFavorites')"
+    >
       <IconStarEnabled
-        class="absolute h-full w-full"
-        :class="isFavorite ? '' : 'opacity-0'"
+        class="absolute top-0 h-full w-full hover:opacity-90"
+        :class="isFavorite ? '' : 'pointer-events-none opacity-0'"
       />
       <IconStarDisabled
-        class="absolute h-full w-full"
-        :class="isFavorite ? 'opacity-0' : ''"
+        class="absolute top-0 h-full w-full hover:opacity-90"
+        :class="isFavorite ? 'pointer-events-none opacity-0' : ''"
       />
-    </div>
+    </button>
   </div>
 </template>

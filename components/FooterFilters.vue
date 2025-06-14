@@ -2,11 +2,15 @@
 import BaseButton from "@/components/BaseButton.vue";
 import IconList from "@/assets/icons/list.svg";
 import IconStar from "@/assets/icons/star.svg";
+import type { FooterFilterOptions } from "@/types/filters.type";
 
-const activeButton = ref<"all" | "favorites">("all");
+const emit = defineEmits(["onFilterChange"]);
 
-const handleClick = (button: "all" | "favorites") => {
-  activeButton.value = button;
+const activeButton = ref<FooterFilterOptions>("all");
+
+const handleClick = (buttonName: FooterFilterOptions) => {
+  activeButton.value = buttonName;
+  emit("onFilterChange", buttonName);
 };
 </script>
 
