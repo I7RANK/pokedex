@@ -16,10 +16,10 @@ const handleClick = (buttonName: FooterFilterOptions) => {
 
 <template>
   <div
-    class="footer-filters-container fixed bottom-0 left-0 flex w-full justify-center gap-4 bg-white py-4.5"
+    class="footer-filters-container fixed bottom-0 left-0 flex w-full justify-center gap-x-[15px] bg-white px-7.5 py-4.5 lg:gap-x-4 lg:px-0"
   >
     <BaseButton
-      class="flex h-11 min-w-[275px] items-center justify-center gap-x-2.5 !py-2.5"
+      class="flex h-11 w-full max-w-[275px] items-center justify-center gap-x-2.5 !py-2.5"
       :variant="activeButton === 'all' ? 'primary' : 'secondary'"
       @click="handleClick('all')"
     >
@@ -27,7 +27,7 @@ const handleClick = (buttonName: FooterFilterOptions) => {
       <span>All</span>
     </BaseButton>
     <BaseButton
-      class="flex h-11 min-w-[275px] items-center justify-center gap-x-2.5 !py-2.5"
+      class="flex h-11 w-full max-w-[275px] items-center justify-center gap-x-2.5 !py-2.5"
       :variant="activeButton === 'favorites' ? 'primary' : 'secondary'"
       @click="handleClick('favorites')"
     >

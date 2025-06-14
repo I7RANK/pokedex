@@ -5,6 +5,7 @@ import PokemonCard from "~/components/PokemonCard.vue";
 import FooterFilters from "~/components/FooterFilters.vue";
 import NotFoundMessage from "~/components/NotFoundMessage.vue";
 import SearchInput from "~/components/SearchInput.vue";
+import ScrollToTopButton from "~/components/ScrollToTopButton.vue";
 import { filterPokemonByName } from "~/utils/filterPokemonByName";
 
 const searchQuery = ref("");
@@ -103,7 +104,10 @@ watch(searchQuery, (value) => {
       <NotFoundMessage
         v-if="searchQuery.trim() !== '' && !visiblePokemons.length"
       />
-      <div class="mt-10 flex flex-col items-center gap-y-2.5">
+      <div
+        v-if="visiblePokemons.length"
+        class="mt-10 flex flex-col items-center gap-y-2.5"
+      >
         <PokemonCard
           v-for="pokemon in visiblePokemons"
           :key="pokemon.name"
@@ -112,11 +116,22 @@ watch(searchQuery, (value) => {
           @on-click-favorites="handleOnClickFavorites(pokemon)"
         />
       </div>
-      <div ref="sentinel" class="h-10" />
-      <div v-if="currentIndex >= maxIndex" class="mt-6 mb-28 text-center">
-        👀 "You’ve reached the end... unless Mew is hiding somewhere."
+      <div
+        v-if="currentIndex >= maxIndex"
+        class="text-neutral mt-6 mb-28 text-center"
+      >
+        👀 You’ve reached the end... unless Mew is hiding somewhere.
       </div>
+      <div
+        v-if="!visiblePokemons.length && activeFilter === 'favorites'"
+        class="text-neutral mt-6 mb-28 text-center"
+      >
+        No favorites yet. Even Pikachu didn’t stick around! ⚡ Catch some and
+        show them love.
+      </div>
+      <div ref="sentinel" class="h-10" />
     </div>
     <FooterFilters @on-filter-change="handleFilterChange" />
+    <ScrollToTopButton class="fixed right-5 bottom-24" />
   </div>
 </template>
