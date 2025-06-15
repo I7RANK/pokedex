@@ -6,6 +6,7 @@ import FooterFilters from "~/components/FooterFilters.vue";
 import NotFoundMessage from "~/components/NotFoundMessage.vue";
 import SearchInput from "~/components/SearchInput.vue";
 import ScrollToTopButton from "~/components/ScrollToTopButton.vue";
+import PokemonDetailsModal from "~/components/PokemonDetailsModal.vue";
 import { filterPokemonByName } from "~/utils/filterPokemonByName";
 
 const searchQuery = ref("");
@@ -20,6 +21,11 @@ const loadedPokemons = ref<Pokemon[]>([]);
 const batchSize = 24;
 const currentIndex = ref(0);
 const sentinel = ref(null);
+const showModal = ref(false);
+const selectedPokemonForDetails = ref<Pokemon>({
+  name: "",
+  url: "",
+});
 
 const visiblePokemons = computed(() => {
   let baseList: Pokemon[] = [];
@@ -35,6 +41,10 @@ const visiblePokemons = computed(() => {
   }
 
   return filterPokemonByName(searchQuery.value, baseList);
+});
+
+const hasFavorites = computed(() => {
+  return Object.values(favorites.value).some((favorite) => favorite.isFavorite);
 });
 
 const getAllPokemons = async () => {
@@ -79,6 +89,11 @@ onMounted(async () => {
   createObserver();
 });
 
+const openModal = (pokemon: Pokemon) => {
+  selectedPokemonForDetails.value = pokemon;
+  showModal.value = true;
+};
+
 const handleOnClickFavorites = (pokemon: Pokemon) => {
   const { name } = pokemon;
   if (favorites.value[name] === undefined)
@@ -97,6 +112,15 @@ watch(searchQuery, (value) => {
 
 <template>
   <div class="mb-20">
+    <PokemonDetailsModal
+      :show="showModal"
+      :close="() => (showModal = false)"
+      :is-favorite="
+        favorites[selectedPokemonForDetails.name]?.isFavorite || false
+      "
+      :detailed-api-endpoint="selectedPokemonForDetails.url"
+      @on-click-favorites="handleOnClickFavorites(selectedPokemonForDetails)"
+    />
     {{ loading }} - {{ searchQuery }}
     <div v-if="loading"></div>
     <div v-else class="max-w-layout mx-auto">
@@ -114,6 +138,7 @@ watch(searchQuery, (value) => {
           :name="pokemon.name"
           :is-favorite="favorites[pokemon.name]?.isFavorite || false"
           @on-click-favorites="handleOnClickFavorites(pokemon)"
+          @on-click-card="openModal(pokemon)"
         />
       </div>
       <div
@@ -123,7 +148,7 @@ watch(searchQuery, (value) => {
         👀 You’ve reached the end... unless Mew is hiding somewhere.
       </div>
       <div
-        v-if="!visiblePokemons.length && activeFilter === 'favorites'"
+        v-if="!hasFavorites && activeFilter === 'favorites'"
         class="text-neutral mt-6 mb-28 text-center"
       >
         No favorites yet. Even Pikachu didn’t stick around! ⚡ Catch some and
@@ -132,6 +157,6 @@ watch(searchQuery, (value) => {
       <div ref="sentinel" class="h-10" />
     </div>
     <FooterFilters @on-filter-change="handleFilterChange" />
-    <ScrollToTopButton class="fixed right-5 bottom-24" />
+    <ScrollToTopButton class="fixed right-5 bottom-24 w-11" />
   </div>
 </template>

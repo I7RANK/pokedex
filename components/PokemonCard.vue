@@ -1,32 +1,23 @@
 <script setup lang="ts">
-import IconStarEnabled from "@/assets/icons/star-enabled.svg";
-import IconStarDisabled from "@/assets/icons/star-disabled.svg";
+import FavoriteButton from "@/components/FavoriteButton.vue";
 
 defineProps<{
   name: string;
   isFavorite: boolean;
 }>();
 
-const emit = defineEmits(["onClickFavorites"]);
+const emit = defineEmits(["onClickFavorites", "onClickCard"]);
 </script>
 
 <template>
   <div
-    class="flex w-full items-center justify-between rounded-[5px] bg-white py-2 pr-2.5 pl-5"
+    class="flex w-full cursor-pointer items-center justify-between rounded-[5px] bg-white py-2 pr-2.5 pl-5 transition-all hover:drop-shadow-md"
+    @click="emit('onClickCard')"
   >
     <p class="text-[22px] capitalize">{{ name }}</p>
-    <button
-      class="relative h-11 w-11 cursor-pointer"
-      @click="emit('onClickFavorites')"
-    >
-      <IconStarEnabled
-        class="absolute top-0 h-full w-full hover:opacity-90"
-        :class="isFavorite ? '' : 'pointer-events-none opacity-0'"
-      />
-      <IconStarDisabled
-        class="absolute top-0 h-full w-full hover:opacity-90"
-        :class="isFavorite ? 'pointer-events-none opacity-0' : ''"
-      />
-    </button>
+    <FavoriteButton
+      :is-favorite="isFavorite"
+      @on-click-favorites="emit('onClickFavorites')"
+    />
   </div>
 </template>
