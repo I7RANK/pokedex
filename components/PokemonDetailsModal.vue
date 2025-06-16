@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PokemonDetailed } from "@/types/pokemon.type";
+import PokeBallLoader from "~/components/PokeBallLoader.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import FavoriteButton from "@/components/FavoriteButton.vue";
 import { copyToClipboard } from "@/utils/copyToClipboard";
@@ -24,6 +25,7 @@ const copyButtonText = ref<"Share to my friends" | "Copied!">(
 );
 
 const getPokemonInfo = async () => {
+  imageLoaded.value = false;
   loading.value = true;
   try {
     pokemonData.value = await $fetch<PokemonDetailed>(
@@ -56,6 +58,12 @@ const handleShareClick = async () => {
   }, 20000);
 };
 
+const imageLoaded = ref(false);
+
+const handleImageLoad = async () => {
+  imageLoaded.value = true;
+};
+
 watch(
   () => props.show,
   (newVal) => {
@@ -76,7 +84,7 @@ onUnmounted(() => {
 <template>
   <transition name="fade">
     <div
-      v-if="show"
+      v-show="show"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-7.5"
       @click.self="close"
     >
@@ -98,10 +106,18 @@ onUnmounted(() => {
             src="https://res.cloudinary.com/dnmjkesyn/image/upload/q_auto:best/v1749959763/pokedex-bg_ycitni.png"
             alt="pokemon background"
           />
+          <div
+            :class="loading || !imageLoaded ? 'opacity-100' : 'opacity-0'"
+            class="absolute flex h-full w-full items-center justify-center transition-all"
+          >
+            <PokeBallLoader />
+          </div>
           <img
-            class="floating absolute left-1/2 h-full w-auto -translate-x-1/2 object-contain object-bottom py-5"
+            :class="!loading && imageLoaded ? 'opacity-100' : 'opacity-0'"
+            class="floating absolute left-1/2 h-full w-auto -translate-x-1/2 object-contain object-bottom py-5 transition-all"
             :src="pokemonSprite"
             alt="pokemon"
+            @load="handleImageLoad"
           />
           <div
             class="shadow-animation absolute -bottom-4 left-1/2 h-16 w-16 -translate-x-1/2 rounded-full bg-black/30"
@@ -109,16 +125,26 @@ onUnmounted(() => {
         </div>
         <div class="px-7.5 py-5">
           <div class="text-h2 text-neutral flex flex-col gap-y-2.5 capitalize">
-            <p class="border-b border-[#E8E8E8] pb-2.5">
+            <p
+              :class="{ 'skeleton-animation': loading }"
+              class="border-b border-[#E8E8E8] pb-2.5"
+            >
               <strong>Name:</strong> {{ pokemonData?.name }}
             </p>
-            <p class="border-b border-[#E8E8E8] pb-2.5">
+            <p
+              :class="{ 'skeleton-animation': loading }"
+              class="border-b border-[#E8E8E8] pb-2.5"
+            >
               <strong>Weight:</strong> {{ pokemonData?.weight }}
             </p>
-            <p class="border-b border-[#E8E8E8] pb-2.5">
+            <p
+              :class="{ 'skeleton-animation': loading }"
+              class="border-b border-[#E8E8E8] pb-2.5"
+            >
               <strong>Height:</strong> {{ pokemonData?.height }}
             </p>
             <p
+              :class="{ 'skeleton-animation': loading }"
               class="line-clamp-2 max-h-14 border-b border-[#E8E8E8] pb-2.5"
               :title="pokemonTypesFormatted"
             >

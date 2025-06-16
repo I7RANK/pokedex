@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PokemonResponse, Pokemon } from "@/types/pokemon.type";
 import type { FooterFilterOptions } from "@/types/filters.type";
+import PokeBallLoader from "~/components/PokeBallLoader.vue";
 import PokemonCard from "~/components/PokemonCard.vue";
 import FooterFilters from "~/components/FooterFilters.vue";
 import NotFoundMessage from "~/components/NotFoundMessage.vue";
@@ -48,6 +49,7 @@ const hasFavorites = computed(() => {
 });
 
 const getAllPokemons = async () => {
+  loading.value = true;
   try {
     const { results } = await $fetch<PokemonResponse>(
       "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=2000",
@@ -121,8 +123,12 @@ watch(searchQuery, (value) => {
       :detailed-api-endpoint="selectedPokemonForDetails.url"
       @on-click-favorites="handleOnClickFavorites(selectedPokemonForDetails)"
     />
-    {{ loading }} - {{ searchQuery }}
-    <div v-if="loading"></div>
+    <div
+      v-if="loading"
+      class="fixed top-0 left-0 flex h-screen w-full items-center justify-center"
+    >
+      <PokeBallLoader />
+    </div>
     <div v-else class="max-w-layout mx-auto">
       <SearchInput v-model="searchQuery" />
       <NotFoundMessage
@@ -155,8 +161,8 @@ watch(searchQuery, (value) => {
         show them love.
       </div>
       <div ref="sentinel" class="h-10" />
+      <FooterFilters @on-filter-change="handleFilterChange" />
+      <ScrollToTopButton class="fixed right-5 bottom-24 w-11" />
     </div>
-    <FooterFilters @on-filter-change="handleFilterChange" />
-    <ScrollToTopButton class="fixed right-5 bottom-24 w-11" />
   </div>
 </template>

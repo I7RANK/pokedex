@@ -19,3 +19,9 @@
   --text-h1: 1.625rem;
   --text-h2: 1.125rem;
 }
+
+@layer utilities {
+  .skeleton-animation {
+    @apply animate-pulse rounded bg-neutral-200 text-transparent;
+  }
+}
