@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { PokemonResponse, Pokemon } from "@/types/pokemon.type";
+import type {
+  PokemonResponse,
+  Pokemon,
+  FavoritesMap,
+} from "@/types/pokemon.type";
 import type { FooterFilterOptions } from "@/types/filters.type";
 import PokeBallLoader from "~/components/PokeBallLoader.vue";
 import PokemonCard from "~/components/PokemonCard.vue";
@@ -10,14 +14,13 @@ import ScrollToTopButton from "~/components/ScrollToTopButton.vue";
 import PokemonDetailsModal from "~/components/PokemonDetailsModal.vue";
 import { filterPokemonByName } from "~/utils/filterPokemonByName";
 
+const FAVORITES_KEY = "favorites";
 const searchQuery = ref("");
 const allPokemons = ref<Pokemon[]>([]);
 const maxIndex = ref(0);
 const loading = ref(true);
 const activeFilter = ref<FooterFilterOptions>("all");
-const favorites = ref<
-  Record<string, { pokemon: Pokemon; isFavorite: boolean }>
->({});
+const favorites = ref<FavoritesMap>({});
 const loadedPokemons = ref<Pokemon[]>([]);
 const batchSize = 24;
 const currentIndex = ref(0);
@@ -85,7 +88,22 @@ const createObserver = () => {
   observer.observe(sentinel.value);
 };
 
+const restoreFavorites = () => {
+  try {
+    const savedFavorites = localStorage.getItem(FAVORITES_KEY);
+    if (savedFavorites) {
+      const parsed = JSON.parse(savedFavorites) as FavoritesMap;
+      favorites.value = Object.fromEntries(
+        Object.entries(parsed).filter(([_, fav]) => fav.isFavorite),
+      );
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 onMounted(async () => {
+  restoreFavorites();
   await getAllPokemons();
   loadMore();
   createObserver();
@@ -110,6 +128,16 @@ const handleFilterChange = (selectedFilter: FooterFilterOptions) => {
 watch(searchQuery, (value) => {
   if (value.trim() === "") return;
 });
+
+watch(
+  () => ({
+    keys: Object.keys(favorites.value),
+    favorites: Object.values(favorites.value).map((f) => f.isFavorite),
+  }),
+  () => {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites.value));
+  },
+);
 </script>
 
 <template>

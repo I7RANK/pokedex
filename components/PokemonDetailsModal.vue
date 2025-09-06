@@ -55,7 +55,7 @@ const handleShareClick = async () => {
   copyButtonText.value = "Copied!";
   setTimeout(() => {
     copyButtonText.value = "Share to my friends";
-  }, 20000);
+  }, 4000);
 };
 
 const imageLoaded = ref(false);

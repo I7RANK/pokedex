@@ -29,3 +29,6 @@ export type PokemonDetailed = {
   }[];
   weight: number;
 };
+
+type Favorite = { pokemon: Pokemon; isFavorite: boolean };
+export type FavoritesMap = Record<string, Favorite>;
